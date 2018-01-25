@@ -5,7 +5,7 @@ class Main:
     def __init__(self):
         #maak verbinding met server
 
-        HOST =
+        HOST = '192.168.42.7'
         PORT = 4040
 
         self.clientsocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -14,10 +14,11 @@ class Main:
     def alarm(self):
         'stuurt alarmmelding naar de server'
         button = Button(17)
-
-        #op knopje gedrukt
-        if button.is_pressed:
-            self.clientsocket.send('alarmmelding')
+        
+        while True:
+            #op knopje gedrukt
+            if button.is_pressed:
+                self.clientsocket.send('alarmmelding')
 
 
     def verlichting(self):
@@ -31,5 +32,5 @@ class Main:
         if data == 'licht-uit':
             led.off()
 
-    def camera(self):
-
+main = Main()
+main.alarm()
