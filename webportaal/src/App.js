@@ -6,6 +6,7 @@ import Gebruikers from './Gebruikers';
 import Modules from './Modules';
 import EnkeleModuleOverzicht from './Enkelemodule';
 import NavbarMenu from './NavbarMenu';
+import Wijzigen from './Wijzigen';
 
 class App extends Component {
   render() {
@@ -17,6 +18,7 @@ class App extends Component {
         <Route exact path='/Gebruikers' component={Gebruikers} />
         <Route exact path='/Modules' component={Modules} />
         <Route exact path='/Enkelemodule' component={EnkeleModuleOverzicht} />
+        <Route exact path="/Wijzigen" component={Wijzigen } /> 
 
       </div>
     );
