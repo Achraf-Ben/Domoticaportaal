@@ -21,7 +21,7 @@ app.set('port', port);
  */
 
 var server = http.createServer(app);
-
+var socketServer = require('../socket_server')(server);
 
 /**
  * Listen on provided port, on all network interfaces.
@@ -30,33 +30,6 @@ var server = http.createServer(app);
 server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
-
-io.on('connection', function (socket) { 
-
-    var tcpClient = new net.Socket();
-    tcpClient.setEncoding("ascii");
-    tcpClient.setKeepAlive(true);
-
-    tcpClient.connect(tcp_PORT, tcp_HOST, function() {
-        console.info('CONNECTED TO : ' + tcp_HOST + ':' + tcp_PORT);
-
-        tcpClient.on('data', function(data) {
-            console.log('DATA: ' + data);
-            socket.emit("httpServer", data);
-        });
-
-        tcpClient.on('end', function(data) {
-            console.log('END DATA : ' + data);
-        });
-    });
-
-    // socket.on('tcp-manager', function(message) {
-    //     console.log('"tcp" : ' + message);
-    //     return;
-    // });
-
-    // socket.emit("httpServer", "Initial Data");
-});
 
 /**
  * Normalize a port into a number, string, or false.

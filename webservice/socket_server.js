@@ -7,7 +7,6 @@ module.exports = function(server){
     var tcpServer = new net.createServer(serverHandler);
     tcpServer.listen(4040);
 
-    
     io.on('connection', function (socket) { 
         socket.on('alarm_off', function(data){
             module = tcpSockets[data.id];
@@ -15,7 +14,7 @@ module.exports = function(server){
         });
     });
 
-    serverHandler = function(socket){
+    function serverHandler(socket){
         console.log('CONNECTED: ' + sock.remoteAddress +':'+ sock.remotePort);
 
         socket.on('data', function(data){
@@ -24,7 +23,7 @@ module.exports = function(server){
                 case 'register':
                     modules[data.id] = socket;
                     io.broadcast.emit('new_module', {id:data.id});
-                case 'alarm_on':
+                case 'alarm':
                     io.broadcast.emit('alarm', {id:socketData.id})
             }
         }); 
@@ -33,9 +32,4 @@ module.exports = function(server){
 
         });
     }
-}
-
-
-
-
-    
+}    
