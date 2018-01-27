@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import {Table, Navbar, Nav, NavItem, NavDropdown, MenuItem, Form, FormControl, FormGroup, Col, Checkbox, Button } from 'react-bootstrap';
 import {BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 
-class Login extends Component {
+class GebruikersAanmaken extends Component {
   render() {
-    return (
+    return(
       <Form horizontal>
 
         <FormGroup>
@@ -25,8 +25,8 @@ class Login extends Component {
 
         <FormGroup>
 
-          <Col sm={10}>
-            <Checkbox>Onthoud Mij</Checkbox>
+          <Col sm={4}>
+            <FormControl type="text" placeholder="Email:" />
           </Col>
 
         </FormGroup>
@@ -44,4 +44,4 @@ class Login extends Component {
   }
 }
 
-export default Login
+export default GebruikersAanmaken

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Table, Navbar, Nav, NavItem, NavDropdown, MenuItem, form, FormControl, FormGroup, Col, Checkbox, Button } from 'react-bootstrap';
+import {Table, Navbar, Nav, NavItem, NavDropdown, MenuItem, Form, FormControl, FormGroup, Col, Checkbox, Button } from 'react-bootstrap';
 import {BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 
 class EnkeleModuleOverzicht extends Component {

@@ -7,13 +7,23 @@ class NavbarMenu extends Component {
     return (
 
       <Navbar>
+        <Nav>
+        <NavItem eventKey={1} href="#">
+          <Link to={'/Modules'}> Home </Link>
+        </NavItem>
+        </Nav>
         <Nav pullLeft>
-          <NavItem eventKey={1} href="#">
-            <Link to={'/Gebruikers'}>Gebruikers</Link>
-          </NavItem>
+          <NavDropdown eventKey={2} title="Gebruikers" href="#">
+            <MenuItem eventKey={2.1} href="#">
+              <Link to={'/GebruikersAanmaken'}>Gebruikers aanmaken</Link>
+            </MenuItem>
+            <MenuItem eventKey={2.2} href="#">
+              <Link to={'/Gebruikers'}>Gebruikers bekijken</Link>
+            </MenuItem>
+           </NavDropdown>
         </Nav>
         <Nav pullRight>
-          <NavItem eventKey={2} href="#">
+          <NavItem eventKey={3} href="#">
             <Link to={'/Modules'}>Modules</Link>
           </NavItem>
         </Nav>
