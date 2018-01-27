@@ -9,6 +9,7 @@ import NavbarMenu from './NavbarMenu';
 import Login from './Login';
 import GebruikersAanmaken from './GebruikersAanmaken';
 import Alarmmelding from './Alarmmelding';
+import Wijzigen from './Wijzigen';
 
 class App extends Component {
   render() {
@@ -20,6 +21,7 @@ class App extends Component {
         <Route exact path='/Gebruikers' component={Gebruikers} />
         <Route exact path='/Modules' component={Modules} />
         <Route exact path='/Enkelemodule' component={EnkeleModuleOverzicht} />
+        <Route exact path='/Wijzigen' component={Wijzigen} />
         <Route exact path='/Login' component={Login} />
         <Route exact path='/GebruikersAanmaken' component={GebruikersAanmaken} />
         <Route exact path='/Alarmmelding' component={Alarmmelding} />

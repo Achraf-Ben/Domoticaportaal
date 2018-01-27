@@ -34,7 +34,7 @@ class GebruikersAanmaken extends Component {
         <FormGroup>
 
           <Col sm={10}>
-            <Button type="submit">Inloggen</Button>
+            <Button type="submit">Aanmaken</Button>
           </Col>
 
         </FormGroup>

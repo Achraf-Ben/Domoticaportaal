@@ -28,6 +28,8 @@ class Gebruikers extends Component {
               <td> 1 </td>
               <td> Mitchell </td>
               <td> Mitchell@Test.nl </td>
+              <td> <Button href="./Wijzigen?id=1" color="second"> Wijzigen </Button> </td>
+              <td> <Button color="danger"> Delete </Button> </td>
 
             </tr>
 
