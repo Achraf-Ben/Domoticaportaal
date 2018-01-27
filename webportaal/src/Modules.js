@@ -1,12 +1,23 @@
 import React, { Component } from 'react';
 import {Table, Navbar, Nav, NavItem, NavDropdown, MenuItem, form, FormControl, FormGroup, Col, Checkbox, Button } from 'react-bootstrap';
-import {BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
+import {BrowserRouter as Router, Switch, Route, Link, Redirect } from 'react-router-dom';
 import EnkeleModuleOverzicht from './Enkelemodule';
+
+var user_logged_in = true;
 
 class ModuleOverzicht extends Component {
   render() {
-    return (
+    if (!user_logged_in)
+      return (
       <div>
+
+        <Redirect to='./Login'  />
+
+      </div>
+    );
+    else
+    return (
+      <div id = "modulestable">
       <Col sm={3}>
 
         <Table striped bordered>

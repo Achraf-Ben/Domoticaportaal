@@ -26,6 +26,23 @@ table th, td {
   text-align: center;
 }
 
+.popover {
+  max-width: none;
+  text-align: center;
+}
+
+#alarmmeldingdiv {
+  position: relative;
+  top: 250px;
+  left: 650px;
+}
+
+#alarmmelding {
+  margin: 5px;
+  float: left;
+  position: relative;
+}
+
 @keyframes App-logo-spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }

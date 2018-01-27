@@ -1,26 +1,30 @@
 import React, { Component } from 'react';
-import {Table, Navbar, Nav, NavItem, NavDropdown, MenuItem, form, FormControl, FormGroup, Col, Checkbox, Button } from 'react-bootstrap';
+import {Table, Navbar, Nav, NavItem, NavDropdown, MenuItem, form, FormControl, FormGroup, Col, Checkbox, Button, Popover } from 'react-bootstrap';
 import {BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 
 class Alarmmelding extends Component {
   render() {
     return (
-      <div>
+      <div id="alarmmeldingdiv">
 
-        Alarm gaat af:
+        <Popover id="alarmmelding" placement="center" title="Alarm melding" >
 
-        <br /> <br />
+          Alarm gaat af:
 
-        Kamer 1
+          <br /> <br />
 
-        <br /> <br />
+          Kamer 1
 
-        20:10:05
+          <br /> <br />
 
-        <br /> <br />
+          20:10:05
 
-        <Button> Camera bekijken </Button>
-        <Button> Alarm uitzetten </Button>
+          <br /> <br />
+
+          <Button> Camera bekijken </Button>
+          <Button> Alarm uitzetten </Button>
+
+        </Popover>
 
       </div>
     );
