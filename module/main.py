@@ -26,14 +26,13 @@ class Main:
         while True:
             data = self.socket.recv(1024)
 
-            if not data:
-                break
-
-            data = json.loads(data)
-            self.id = data['id']
+            if data:
+                data = json.loads(data)
+                self.id = data['id']
 
     def alarm(self):
         'stuurt alarmmelding naar de server'
+        pass
         # button = Button(17)
 
         # while True:
@@ -43,7 +42,7 @@ class Main:
             #     self.socket.send(pkg.encode())
 
     def socket_handler(self):
-        led = LED(2)
+        #led = LED(2)
         while True:
             data = self.socket.recv(1024)
 
@@ -53,9 +52,11 @@ class Main:
             data = json.loads(data)
 
             if data['msg'] == 'licht-aan':
-                led.on()
+                pass
+                #led.on()
             if data['msg'] == 'licht-uit':
-                led.off()
+                pass
+                #led.off()
             if data['msg'] == 'camera_on':
                 output = check_output(['ps', '-A'])
                 if 'mjpg_streamer' not in output:
@@ -64,7 +65,6 @@ class Main:
                                                           '-o "/usr/local/lib/output_http.so -p.so '
                                                           '-p 10088 -w /usr/local/www" &'])
             if data['msg'] == 'camera_off':
-
                 output = check_output(['ps', '-A'])
                 if 'mjpg_streamer' in output:
                     call(['killall', 'mjpg_streamer'])

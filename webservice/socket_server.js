@@ -48,6 +48,7 @@ module.exports = function(server){
         console.log('CONNECTED: ' + socket.remoteAddress +':'+ socket.remotePort);
 
         socket.on('data', function(data){
+            console.log('DATA: '+data)
             data = JSON.parse(data);
             switch(data.msg){
                 case 'register':
@@ -62,7 +63,8 @@ module.exports = function(server){
                             if (err) throw err;
                             var id = result;
                             modules[id] = socket;
-
+                            console.log(err);
+                            console.log(result);
                             response = JSON.stringify({
                                 'msg': 'registered',
                                 'id': id
