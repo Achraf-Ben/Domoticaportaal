@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="msapplication-tap-highlight" content="no" />
+    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width" />
+    <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline'; style-src 'self' 'unsafe-inline'; media-src *" />
+    <link rel="stylesheet" type="text/css" href="css/index.css" />
+    <script type="text/javascript" src="js/index.js"></script>
+    <title> Mark Snier </title>
+</head>
+
+<body>
+    <script type="text/javascript" src="cordova.js"></script>
+    <script type="text/javascript" src="js/index.js"></script>
+    <h1> Zorgtotaal </h1>
+
+    <div>
+        <div class="first">
+          <p class="center">Lamp</p>
+            <button onclick="lampAan()"; class="onButton">AAN</button>
+            <button onclick="lampUit()"; class="offButton">UIT</button>
+            <svg height="62" width="75">
+                <circle id="circle1" cx="50" cy="40" r="20" stroke="black" stroke-width="3" fill=red />
+            </svg>
+        </div>
+
+        <div class="second">
+            <p class="center">Camera</p>
+            <button onclick="cameraAan()"; class="onButton">AAN</button>
+            <button onclick="cameraUit()"; class="offButton">UIT</button>
+            <svg height="62" width="75">
+                <circle id="circle2"cx="50" cy="40" r="20" stroke="black" stroke-width="3" fill=red />
+            </svg>
+        </div>
+
+    </div>
+</body>
+
+</html>
