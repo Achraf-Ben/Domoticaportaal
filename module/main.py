@@ -28,6 +28,7 @@ class Main:
 
             if data:
                 data = json.loads(data.decode())
+                print(data)
                 self.id = data['id']
 
     def alarm(self):

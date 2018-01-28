@@ -65,7 +65,7 @@ module.exports = function(server){
                     });
 
                     socket.write(response)
-                    io.local.emit('new_module', {id:data.id});
+                    io.local.emit('new_module', {id:id});
                     break;
                     
                 case 'alarm':
@@ -89,7 +89,7 @@ function registerModule(ip, mac_address){
 
         async.auto({
             getId: function(callback){
-                con.query("SELECT id from module WHERE mac_address=?", [data.mac_address], function (err, result) {
+                con.query("SELECT id from module WHERE mac_address=?", [mac_address], function (err, result) {
                     if (err) console.log(err);
 
                     if(!result){
@@ -105,7 +105,7 @@ function registerModule(ip, mac_address){
                     callback(null, result.getId.id);
                 } else {
                     con.query("INSERT INTO module (hostname, ip, mac_address, camera_status, light_status, status)",
-                        ['',socket.remoteAddress,data.mac_address,0,0,1],function(err, result){
+                        ['',socket.remoteAddress,mac_address,0,0,1],function(err, result){
                             if(err) console.log(err);
                             callback(null, result.insertId);
                         });
