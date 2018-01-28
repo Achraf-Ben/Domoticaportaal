@@ -15,7 +15,7 @@ class Main:
 
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.connect((host, port))
-        self.mac_address = netifaces.ifaddresses('eth0')[netifaces.AF_LINK][0].addr
+        self.mac_address = netifaces.ifaddresses('eth0')[netifaces.AF_LINK][0]['addr']
 
         pkg = json.dumps({
             'msg': 'register',
