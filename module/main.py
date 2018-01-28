@@ -1,7 +1,9 @@
 from threading import Thread
 from subprocess import call, check_output
+# from gpiozero import Button, LED
 import socket
-from gpiozero import Button, LED
+import json
+import netifaces
 
 
 class Main:
@@ -13,15 +15,32 @@ class Main:
 
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.connect((host, port))
+        self.mac_address = netifaces.ifaddresses('eth0')[netifaces.AF_LINK][0].addr
+
+        pkg = json.dumps({
+            'msg': 'register',
+            'mac_address': self.mac_address
+        })
+        self.socket.send(pkg.encode())
+
+        while True:
+            data = self.socket.recv(1024)
+
+            if not data:
+                break
+
+            data = json.loads(data)
+            self.id = data['id']
 
     def alarm(self):
         'stuurt alarmmelding naar de server'
-        button = Button(17)
+        # button = Button(17)
 
-        while True:
+        # while True:
             #op knopje gedrukt
-            if button.is_pressed:
-                self.socket.send('alarm')
+            # if button.is_pressed:
+            #     pkg = json.dumps({'msg': 'alarm'})
+            #     self.socket.send(pkg.encode())
 
     def socket_handler(self):
         led = LED(2)
@@ -31,18 +50,20 @@ class Main:
             if not data:
                 break
 
-            if data == 'licht-aan':
+            data = json.loads(data)
+
+            if data['msg'] == 'licht-aan':
                 led.on()
-            if data == 'licht-uit':
+            if data['msg'] == 'licht-uit':
                 led.off()
-            if data == 'camera_on':
+            if data['msg'] == 'camera_on':
                 output = check_output(['ps', '-A'])
                 if 'mjpg_streamer' not in output:
                     call(['/usr/local/bin/mjpg_streamer', '-i "/usr/local/lib/input_uvc.so '
                                                           '-n -f 30 -r 640x480" '
                                                           '-o "/usr/local/lib/output_http.so -p.so '
                                                           '-p 10088 -w /usr/local/www" &'])
-            if data == 'camera_off':
+            if data['msg'] == 'camera_off':
 
                 output = check_output(['ps', '-A'])
                 if 'mjpg_streamer' in output:
@@ -53,10 +74,10 @@ class Main:
         """ Start alle processen """
 
         socket_thread = Thread(target=self.socket_handler, daemon=True)
-        alarm_thread = Thread(target=self.alarm, daemon=True)
+        # alarm_thread = Thread(target=self.alarm, daemon=True)
 
         socket_thread.start()
-        alarm_thread.start()
+        # alarm_thread.start()
 
 
 Main().run()
