@@ -14,7 +14,7 @@ class Gebruiker extends Component {
   }
 
   componentWillMount() {
-    var url = "http://localhost:3001/api/users/";
+    var url = "http://localhost:3001/api/users/getUsers";
     Request.get(url).then((response) => {
       this.setState({
         users: response.body

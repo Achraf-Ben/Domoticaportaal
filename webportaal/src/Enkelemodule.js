@@ -1,11 +1,52 @@
 import React, { Component } from 'react';
-import {Table, Navbar, Nav, NavItem, NavDropdown, MenuItem, Form, FormControl, FormGroup, Col, Checkbox, Button } from 'react-bootstrap';
+import {Table, Navbar, Nav, NavItem, NavDropdown, MenuItem, form, FormControl, FormGroup, Col, Checkbox, Button } from 'react-bootstrap';
 import {BrowserRouter as Router, Switch, Route, Link, Redirect } from 'react-router-dom';
+import Request from 'superagent';
+import _ from 'lodash';
 
 var user_logged_in = true;
 
+function getParameterByName(name, url) {
+    if (!url) url = window.location.href;
+    name = name.replace(/[\[\]]/g, "\\$&");
+    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
+}
+
 class EnkeleModuleOverzicht extends Component {
-  render() {
+
+  constructor(){
+    super();
+    this.state = {};
+  }
+
+  componentWillMount() {
+    var moduleid = getParameterByName('id');
+    var url = `http://localhost:3001/api/modules/getModuleWithID/${moduleid}`;
+    Request.get(url).then((response) => {
+      this.setState({
+        modules: response.body
+      })
+    })
+  }
+
+  render(){
+
+    var modules = _.map(this.state.modules, (module) => {
+      return <tr>
+              <td> {module.id}  </td>
+              <td> {module.hostname} </td>
+              <td> {module.ip} </td>
+              <td> {module.module_status} </td>
+              <td> {module.camera_status} </td>
+              <td> {module.light_status} </td>
+              <td> {module.mac_address} </td>
+            </tr>;
+    });
+
     if (!user_logged_in)
       return (
       <div>
@@ -16,46 +57,40 @@ class EnkeleModuleOverzicht extends Component {
     );
     else
     return (
-      <Col sm={12}>
+      <div id = "modulestable">
+        <Col sm={5}>
 
-        <Table striped bordered>
+          <Table striped bordered>
 
-          <thead>
+              <thead>
 
-            <tr>
+                <tr>
 
-              <th> Hostname </th>
-              <th> Ip </th>
-              <th> Module status</th>
-              <th> Camera status </th>
-              <th> Light status </th>
-              <th> Mac-address </th>
+                  <th> ID </th>
+                  <th> Hostname </th>
+                  <th> IP </th>
+                  <th> Module status </th>
+                  <th> Camera status </th>
+                  <th> Light status </th>
+                  <th> Mac_address </th>
 
-            </tr>
+                </tr>
 
-          </thead>
+              </thead>
 
-          <tbody>
+              <tbody>
 
-            <tr>
+                {modules}
 
-              <td> Raspberry 1 </td>
-              <td> 0.0.0.0 </td>
-              <td> Aan </td>
-              <td> Uit </td>
-              <td> Aan </td>
-              <td> 0.0.0.0 </td>
+              </tbody>
 
-            </tr>
+            </Table>
 
-          </tbody>
+            <Button href="./Modules" > Back </Button>
 
-        </Table>
+          </Col>
 
-        <Button href="./Modules" > Back </Button>
-
-      </Col>
-
+        </div>
     );
   }
 }
