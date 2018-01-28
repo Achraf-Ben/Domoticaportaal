@@ -2,11 +2,13 @@ var net = require('net')
 var socketio = require('socket.io');
 var modules = {};
 var mysql = require('mysql');
+var async = require('async');
 
 var con = mysql.createConnection({
   host: "localhost",
   user: "root",
-  password: ""
+  password: "NiA12309",
+  database: "domotica_portaal"
 });
 
 module.exports = function(server){
@@ -53,31 +55,22 @@ module.exports = function(server){
             switch(data.msg){
                 case 'register':
                     
-                    con.createConnection(function(err){
+                    var id = registerModule(socket.remoteAddress, data.mac_address);
 
-                        if(err){
-                            console.log(err);
-                        }
-
-                         con.query("SELECT id from module WHERE mac_address=?", [data.mac_address], function (err, result) {
-                            if (err) throw err;
-                            var id = result;
-                            modules[id] = socket;
-                            console.log(err);
-                            console.log(result);
-                            response = JSON.stringify({
-                                'msg': 'registered',
-                                'id': id
-                            });
-
-                            socket.write(response)
-                            io.broadcast.emit('new_module', {id:data.id});
-                        });
+                    modules[id] = socket;
+                    
+                    response = JSON.stringify({
+                        'msg': 'registered',
+                        'id': id
                     });
 
+                    socket.write(response)
+                    io.local.emit('new_module', {id:data.id});
+                    break;
                     
                 case 'alarm':
-                    io.broadcast.emit('alarm', {id:socketData.id})
+                    io.local.emit('alarm', {id:socketData.id});
+                    break;
             }
         }); 
 
@@ -87,5 +80,41 @@ module.exports = function(server){
     }
 }    
 
+function registerModule(ip, mac_address){
+    con.connect(function(err){
 
+        if(err){
+            console.log(err);
+        }
+
+        async.auto({
+            getId: function(callback){
+                con.query("SELECT id from module WHERE mac_address=?", [data.mac_address], function (err, result) {
+                    if (err) console.log(err);
+
+                    if(!result){
+                        
+                    }
+
+                    var id = result;
+                    
+                });
+            },
+            register: ['getId', function(callback, results){
+                if(result.getId){
+                    callback(null, result.getId.id);
+                } else {
+                    con.query("INSERT INTO module (hostname, ip, mac_address, camera_status, light_status, status)",
+                        ['',socket.remoteAddress,data.mac_address,0,0,1],function(err, result){
+                            if(err) console.log(err);
+                            callback(null, result.insertId);
+                        });
+                }
+            }]
+        }, function(err, results){
+            con.end();
+            return results.register;
+        });
+    });
+}
 

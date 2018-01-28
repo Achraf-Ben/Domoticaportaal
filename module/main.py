@@ -27,7 +27,7 @@ class Main:
             data = self.socket.recv(1024)
 
             if data:
-                data = json.loads(data)
+                data = json.loads(data.decode())
                 self.id = data['id']
 
     def alarm(self):
