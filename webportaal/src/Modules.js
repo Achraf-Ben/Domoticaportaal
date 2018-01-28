@@ -18,7 +18,7 @@ class ModuleOverzicht extends Component {
     else
     return (
       <div id = "modulestable">
-      <Col sm={3}>
+      <Col sm={12}>
 
         <Table striped bordered>
 

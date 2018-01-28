@@ -20,7 +20,7 @@ class GebruikersAanmaken extends Component {
 
         <FormGroup>
 
-          <Col sm={4}>
+          <Col sm={12}>
             <FormControl type="text" placeholder="Username:" />
           </Col>
 
@@ -28,7 +28,7 @@ class GebruikersAanmaken extends Component {
 
         <FormGroup>
 
-          <Col sm={4}>
+          <Col sm={12}>
             <FormControl type="password" placeholder="Wachtwoord:" />
           </Col>
 
@@ -36,7 +36,7 @@ class GebruikersAanmaken extends Component {
 
         <FormGroup>
 
-          <Col sm={4}>
+          <Col sm={12}>
             <FormControl type="text" placeholder="Email:" />
           </Col>
 
@@ -44,7 +44,7 @@ class GebruikersAanmaken extends Component {
 
         <FormGroup>
 
-          <Col sm={10}>
+          <Col sm={12}>
             <Button type="submit">Aanmaken</Button>
           </Col>
 

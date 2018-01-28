@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Table, Navbar, Nav, NavItem, NavDropdown, MenuItem, form, FormControl, FormGroup, Col, Checkbox, Button } from 'react-bootstrap';
+import {Table, Navbar, Nav, NavItem, NavDropdown, MenuItem, Form, FormControl, FormGroup, Col, Checkbox, Button } from 'react-bootstrap';
 import {BrowserRouter as Router, Switch, Route, Link, Redirect } from 'react-router-dom';
 
 var user_logged_in = true;
@@ -16,31 +16,27 @@ class Wijzigen extends Component {
     );
     else
     return (
-      <form>
+      <Form horizontal>
 
         <FormGroup>
 
-          <Col sm={2}>
+          <Col sm={12}>
             <FormControl type="text" value="1" placeholder="ID:" />
           </Col>
 
         </FormGroup>
 
-        <br/> <br/>
-
         <FormGroup>
 
-          <Col sm={4}>
+          <Col sm={12}>
             <FormControl type="text" value="Mitchell" placeholder="Naam:" />
           </Col>
 
         </FormGroup>
 
-        <br/>
-
         <FormGroup>
 
-          <Col sm={4}>
+          <Col sm={12}>
             <FormControl type="text" value="Mitchell@Test.nl" placeholder="Email:" />
           </Col>
 
@@ -48,14 +44,14 @@ class Wijzigen extends Component {
 
         <FormGroup>
 
-          <Col sm={10}>
+          <Col sm={12}>
             <Button type="submit">Opslaan</Button>
             <Button href="./Gebruikers">Back</Button>
           </Col>
 
         </FormGroup>
 
-      </form>
+      </Form>
     );
   }
 }

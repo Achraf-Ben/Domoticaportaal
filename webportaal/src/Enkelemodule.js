@@ -16,7 +16,7 @@ class EnkeleModuleOverzicht extends Component {
     );
     else
     return (
-      <Col sm={4}>
+      <Col sm={12}>
 
         <Table striped bordered>
 

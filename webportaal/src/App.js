@@ -10,6 +10,7 @@ import Login from './Login';
 import GebruikersAanmaken from './GebruikersAanmaken';
 import Alarmmelding from './Alarmmelding';
 import Wijzigen from './Wijzigen';
+import Test from './Test';
 
 var user_logged_in = true;
 
@@ -30,6 +31,7 @@ class App extends Component {
         <Route exact path='/Login' component={Login} />
         <Route exact path='/GebruikersAanmaken' component={GebruikersAanmaken} />
         <Route exact path='/Alarmmelding' component={Alarmmelding} />
+        <Route exact path='/Test' component={Test} />
 
       </div>
     );
@@ -46,6 +48,7 @@ class App extends Component {
         <Route exact path='/Login' component={Login} />
         <Route exact path='/GebruikersAanmaken' component={GebruikersAanmaken} />
         <Route exact path='/Alarmmelding' component={Alarmmelding} />
+        <Route exact path='/Test' component={Test} />
 
       </div>
 
