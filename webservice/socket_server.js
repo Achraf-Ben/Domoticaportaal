@@ -3,13 +3,15 @@ var socketio = require('socket.io');
 var modules = {};
 var mysql = require('mysql');
 var async = require('async');
-
-var con = mysql.createConnection({
+var databaseSettings = {
   host: "localhost",
   user: "root",
   password: "NiA12309",
   database: "domotica_portaal"
-});
+};
+
+
+
 
 module.exports = function(server){
     var io = socketio(server);
@@ -52,11 +54,11 @@ module.exports = function(server){
         socket.on('data', function(data){
             console.log('DATA: '+data)
             data = JSON.parse(data);
-            switch(data.msg){
-                case 'register':
-                    
-                    var id = registerModule(socket.remoteAddress, data.mac_address);
-
+        
+            if(data.msg == 'register'){
+                
+                registerModule(socket.remoteAddress, data.mac_address, function(id){
+                    console.log(id);
                     modules[id] = socket;
                     
                     response = JSON.stringify({
@@ -64,13 +66,15 @@ module.exports = function(server){
                         'id': id
                     });
 
+                    console.log(response);
+
                     socket.write(response)
                     io.local.emit('new_module', {id:id});
-                    break;
-                    
-                case 'alarm':
-                    io.local.emit('alarm', {id:socketData.id});
-                    break;
+                });
+            }
+
+            if(data.msg == 'alarm'){
+                io.local.emit('alarm', {id:socketData.id});
             }
         }); 
 
@@ -80,7 +84,9 @@ module.exports = function(server){
     }
 }    
 
-function registerModule(ip, mac_address){
+function registerModule(ip, mac_address, cb){
+    var con = mysql.createConnection(databaseSettings);
+    ip = ip.replace('::ffff:','');
     con.connect(function(err){
 
         if(err){
@@ -89,31 +95,28 @@ function registerModule(ip, mac_address){
 
         async.auto({
             getId: function(callback){
-                con.query("SELECT id from module WHERE mac_address=?", [mac_address], function (err, result) {
+                con.query("SELECT id from module WHERE mac_address=?", [mac_address], function (err, dbResult) {
                     if (err) console.log(err);
-
-                    if(!result){
-                        
-                    }
-
-                    var id = result;
-                    
+                    callback(null, dbResult);                    
                 });
             },
-            register: ['getId', function(callback, results){
-                if(result.getId){
-                    callback(null, result.getId.id);
+            register: ['getId', function(results, callback){
+                
+                if(results.getId.length){
+                    var id = results.getId[0].id;
+                    callback(null, id);
                 } else {
-                    con.query("INSERT INTO module (hostname, ip, mac_address, camera_status, light_status, status)",
-                        ['',socket.remoteAddress,mac_address,0,0,1],function(err, result){
+                    var values = [['',ip,mac_address,0,0,1]];
+                    con.query("INSERT INTO module (hostname, ip, mac_address, camera_status, light_status, status) VALUES ?",
+                        [values],function(err, dbResult){
                             if(err) console.log(err);
-                            callback(null, result.insertId);
+                            callback(null, dbResult.insertId);
                         });
                 }
             }]
         }, function(err, results){
             con.end();
-            return results.register;
+            cb(results.register);
         });
     });
 }
