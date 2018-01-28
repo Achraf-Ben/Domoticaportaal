@@ -40,6 +40,7 @@ class Gebruiker extends Component {
     else
     return (
         <div>
+          <Col sm={12}>
 
           <Table striped bordered>
 
@@ -62,6 +63,8 @@ class Gebruiker extends Component {
             </tbody>
 
           </Table>
+
+          </Col>
 
         </div>
     );

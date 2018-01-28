@@ -16,6 +16,7 @@ class GebruikersAanmaken extends Component {
     );
     else
     return(
+      <Col sm={12}>
       <Form horizontal>
 
         <FormGroup>
@@ -51,6 +52,7 @@ class GebruikersAanmaken extends Component {
         </FormGroup>
 
       </Form>
+      </Col>
     );
   }
 }
