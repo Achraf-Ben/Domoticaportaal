@@ -53,11 +53,9 @@ class Main:
             data = json.loads(data)
 
             if data['msg'] == 'licht-aan':
-                pass
-                #led.on()
+                led.on()
             if data['msg'] == 'licht-uit':
-                pass
-                #led.off()
+                led.off()
             if data['msg'] == 'camera_on':
                 output = check_output(['ps', '-A'])
                 if 'mjpg_streamer' not in output:
@@ -74,11 +72,16 @@ class Main:
     def run(self):
         """ Start alle processen """
 
+        led = LED(2)
+        led.on()
+        
         socket_thread = Thread(target=self.socket_handler, daemon=True)
         alarm_thread = Thread(target=self.alarm, daemon=True)
 
         socket_thread.start()
         alarm_thread.start()
+
+
 
 
 Main().run()
