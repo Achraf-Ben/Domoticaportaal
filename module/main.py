@@ -1,6 +1,6 @@
 from threading import Thread
 from subprocess import call, check_output
-# from gpiozero import Button, LED
+from gpiozero import Button, LED
 import socket
 import json
 import netifaces
@@ -38,6 +38,7 @@ class Main:
         while True:
             #op knopje gedrukt
             if button.is_pressed:
+                print('button pressed!!');
                 pkg = json.dumps({'msg': 'alarm'})
                 self.socket.send(pkg.encode())
 
