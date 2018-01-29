@@ -36,7 +36,7 @@ class Main:
         button = Button(17)
 
         while True:
-            op knopje gedrukt
+            #op knopje gedrukt
             if button.is_pressed:
                 pkg = json.dumps({'msg': 'alarm'})
                 self.socket.send(pkg.encode())

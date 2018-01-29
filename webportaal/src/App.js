@@ -4,6 +4,7 @@ import Gebruikers from './Gebruikers/';
 import Modules from './Modules/';
 import NavbarMenu from './NavbarMenu';
 import Login from './Login/';
+import io from 'socket.io-client';
 import './App.css';
 
 function withProps(Component, props) {
@@ -16,8 +17,8 @@ const Main = (props) => (
   <div>
     <NavbarMenu />
     <Switch>   
-      <Route exact path='/gebruikers' component={Gebruikers} />
-      <Route exact path='/modules' component={Modules} />
+      <Route exact path='/gebruikers' component={withProps(Gebruikers, {'socket': props.socket})} />
+      <Route exact path='/modules' component={withProps(Modules, {'socket': props.socket})} />
       <Redirect from="/" to="/modules" />
     </Switch>
   </div>
@@ -37,7 +38,12 @@ class App extends Component {
     super(props);
 
     var user = JSON.parse(localStorage.getItem('user'));
-    this.state = {user:user}
+    this.state = {
+      user:user, 
+      socket_server:'http://localhost',
+      alarm: false,
+      alarm_module:null
+    }
   }
 
   setUser(user){
@@ -46,8 +52,16 @@ class App extends Component {
   }  
 
   render() {
-    let view = this.state.user ? <Main /> : <LoginMain setUser={this.setUser.bind(this)} />;
-    
+
+    const socket = io(this.state.socket_server);
+    socket.on('alarm', function(module){
+      module = JSON.parse(module);
+      this.setState({alarm:true, alarm_module:module});
+      console.log(this.state);
+    });
+
+    let view = this.state.user ? <Main socket={socket} /> : <LoginMain setUser={this.setUser.bind(this)}/>;
+
     return (
       <div>
         { view }

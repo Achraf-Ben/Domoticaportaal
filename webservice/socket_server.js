@@ -4,6 +4,7 @@ var modules = {};
 var mysql = require('mysql');
 var async = require('async');
 var config = require('./config');
+var moment = require('moment');
 
 module.exports = function(server){
     var io = socketio(server);
@@ -25,17 +26,16 @@ module.exports = function(server){
         socket.on('light_off', function(data){
             tcpSocket = modules[data.id];
             tcpSocket.write('light_off');
-
         });
 
         socket.on('camera_on', function(data){
             tcpSocket = modules[data.id];
-
+            tcpSocket.write('camera_on');
         });
 
         socket.on('camera_off', function(data){
             tcpSocket = modules[data.id];
-
+            tcpSocket.write('camera_on')
         });
     });
 
@@ -48,9 +48,8 @@ module.exports = function(server){
             data = JSON.parse(data);
         
             if(data.msg == 'register'){
-                
                 registerModule(socket.remoteAddress, data.mac_address, function(id){
-                    console.log(id);
+                    socket.module_id = id;
                     modules[id] = socket;
                     
                     response = JSON.stringify({
@@ -58,23 +57,57 @@ module.exports = function(server){
                         'id': id
                     });
 
-                    console.log(response);
-
                     socket.write(response)
                     io.local.emit('new_module', {id:id});
                 });
             }
 
             if(data.msg == 'alarm'){
-                io.local.emit('alarm', {id:socketData.id});
+                console.log('ALAAARM: '+socket.module_id)
+                createAlarm(socket.module_id, function(module){
+                    io.local.emit('alarm', {module:module});
+                });
             }
         }); 
 
         socket.on('end', function(){
-
+            updateStatus(socket.module_id, 0, function(){
+                io.local.emit('module_disconnect', {id:socket.module_id});
+            });
         });
     }
 }    
+
+function createAlarm(id, callback){
+    conn = mysql.createConnection(config.databaseSettings);
+    conn.connect(function(err){
+        async.auto({
+            createAlarm: function(cb){
+                var timestamp = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
+                var values = [[id, 1, timestamp]];
+                conn.query("INSERT INTO alarm (module_id, status, alarm_time), VALUES ?", 
+                    [values], function(err, results){
+                        cb(err);
+                    });
+            },
+            getModule: function(cb){
+                conn.query("SELECT * FROM module WHERE id=? LIMIT 1", [id], function(err, results){
+                    cb(err, results[0]);
+                });
+            }
+        }, function(err, results){
+            conn.end();
+            callback(err, results.getModule);
+        });
+    }); 
+}
+
+function updateStatus(id, status, callback){
+    conn = mysql.createConnection(config.databaseSettings);
+    conn.query('UPDATE module SET status = ? WHERE id=?', [status, id], function(err, results){
+        callback();
+    });
+}
 
 function registerModule(ip, mac_address, cb){
     var con = mysql.createConnection(config.databaseSettings);
@@ -93,10 +126,11 @@ function registerModule(ip, mac_address, cb){
                 });
             },
             register: ['getId', function(results, callback){
-                
                 if(results.getId.length){
                     var id = results.getId[0].id;
-                    callback(null, id);
+                    updateStatus(id, 1, function(){
+                        callback(null, id);
+                    });
                 } else {
                     var values = [['',ip,mac_address,0,0,1]];
                     con.query("INSERT INTO module (hostname, ip, mac_address, camera_status, light_status, status) VALUES ?",

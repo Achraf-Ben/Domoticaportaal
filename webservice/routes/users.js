@@ -73,14 +73,14 @@ router.post('/', function(req, res, next){
 		hashPassword: function(callback){
 			var password = req.body.password;
 			bcrypt.hash(password, 10, function(err, hash) {
-				callback(null, password);  
+				callback(null, hash);  
 			});
 		},
 	}, function(err, results){
 		var password = results.hashPassword;
 
 		var conn = mysql.createConnection(config.databaseSettings);
-		var values = [[email, password]];
+		var values = [[req.body.email, password]];
 		conn.connect(function(err){
 			conn.query("INSERT INTO user (email, password) VALUES ?", [values], function(err, result){
 				conn.end();
@@ -120,6 +120,7 @@ router.get('/', function(req, res, next) {
 
 router.put('/:id', function(req, res, next){
 	var sess_user_id = req.session.user_id;
+	console.log('editing: '+req.params.id);
 	
 	if(!sess_user_id){
 		res.status(403).send("unauthorized");
@@ -131,7 +132,7 @@ router.put('/:id', function(req, res, next){
 			var password = req.body.password;
 			if(password){
 				bcrypt.hash(password, 10, function(err, hash) {
-					callback(null, password);  
+					callback(null, hash);  
 				});
 			} else {
 				callback();
@@ -140,24 +141,28 @@ router.put('/:id', function(req, res, next){
 		makeQuery: ['checkPassword', function(results, callback){
 			params_list = [req.body.email];
 			var password = results.checkPassword;
-			var sql = "UPDATE user SET email=? ";
+			var sql = "UPDATE user SET email=?";
 			
 			if(password){
-				sql+="SET password=? ";
+				sql+=", password=?";
 				params_list.push(password);
 			}
 
-			sql+="WHERE id=?";
+			sql+=" WHERE id=?";
 			params_list.push(req.params.id);
 			callback(null, {sql:sql, params_list:params_list});
 		}]
 	}, function(err, results){
-		var sql = results.sql;
-		var params_list = results.params_list;
+		var sql = results.makeQuery.sql;
+		var params_list = results.makeQuery.params_list;
+		console.log(sql);
+		console.log(params_list);
 
 		var conn = mysql.createConnection(config.databaseSettings);
 		conn.connect(function(err){
 			conn.query(sql,params_list, function(err, result){
+				console.log('err: '+err)
+				// console.log('rows affected: '+result.affectedRows)
 				conn.end();
 				res.json({success:true});
 			});
