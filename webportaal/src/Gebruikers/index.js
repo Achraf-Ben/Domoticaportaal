@@ -32,7 +32,7 @@ class Gebruikers extends Component {
   }
 
   editUser(id){
-
+    
   }
 
   render() {

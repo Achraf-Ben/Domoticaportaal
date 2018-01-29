@@ -148,7 +148,7 @@ router.put('/:id', function(req, res, next){
 			}
 
 			sql+="WHERE id=?";
-			params_list.push(req.params.id;)
+			params_list.push(req.params.id);
 			callback(null, {sql:sql, params_list:params_list});
 		}]
 	}, function(err, results){

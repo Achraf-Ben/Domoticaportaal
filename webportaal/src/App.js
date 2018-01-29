@@ -7,10 +7,10 @@ import Login from './Login/';
 import './App.css';
 
 function withProps(Component, props) {
-    return function(matchProps) {
-      return <Component {...props} {...matchProps} />
-    }
+  return function(matchProps) {
+    return <Component {...props} {...matchProps} />
   }
+}
 
 const Main = (props) => (
   <div>
@@ -21,14 +21,14 @@ const Main = (props) => (
       <Redirect from="/" to="/modules" />
     </Switch>
   </div>
-)
+);
 
 const LoginMain = (props) => (
   <Switch>
     <Route path='/login' component={withProps(Login, {setUser:props.setUser})} />          
     <Redirect push to={"/login"} />
   </Switch>
-)
+);
 
 
 class App extends Component {
@@ -47,7 +47,7 @@ class App extends Component {
 
   render() {
     let view = this.state.user ? <Main /> : <LoginMain setUser={this.setUser.bind(this)} />;
-
+    
     return (
       <div>
         { view }

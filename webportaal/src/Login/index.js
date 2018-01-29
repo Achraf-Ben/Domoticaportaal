@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import {FormControl, FormGroup, Button, ControlLabel } from 'react-bootstrap';
-import {Redirect} from 'react-router-dom';
 import './Login.css';
 import request from 'superagent'
 
@@ -31,21 +30,18 @@ class Login extends Component {
     request
     .post('/api/users/login')
     .send({ email: this.state.email, password: this.state.password })
-    .then(function(res){
-      me.props.setUser(res.body);
-      me.props.history.push('/');
-    })
-    .catch(function(err) {
-      console.log(err)
+    .end(function(err, res){
+      if(err){
+        console.log(err);
+      } else {
+        me.props.setUser(res.body);
+        me.props.history.push('/');
+      }
+      
     });
   }
 
   render() {
-
-    if(this.state.redirect){
-      return (<Redirect push to={"/"} />);
-    }
-
     return (
       <div className="Login">
         <form onSubmit={this.handleSubmit}>
