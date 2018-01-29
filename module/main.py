@@ -33,17 +33,16 @@ class Main:
 
     def alarm(self):
         'stuurt alarmmelding naar de server'
-        pass
-        # button = Button(17)
+        button = Button(17)
 
-        # while True:
-            #op knopje gedrukt
-            # if button.is_pressed:
-            #     pkg = json.dumps({'msg': 'alarm'})
-            #     self.socket.send(pkg.encode())
+        while True:
+            op knopje gedrukt
+            if button.is_pressed:
+                pkg = json.dumps({'msg': 'alarm'})
+                self.socket.send(pkg.encode())
 
     def socket_handler(self):
-        #led = LED(2)
+        led = LED(2)
         while True:
             data = self.socket.recv(1024)
 
@@ -75,10 +74,10 @@ class Main:
         """ Start alle processen """
 
         socket_thread = Thread(target=self.socket_handler, daemon=True)
-        # alarm_thread = Thread(target=self.alarm, daemon=True)
+        alarm_thread = Thread(target=self.alarm, daemon=True)
 
         socket_thread.start()
-        # alarm_thread.start()
+        alarm_thread.start()
 
 
 Main().run()

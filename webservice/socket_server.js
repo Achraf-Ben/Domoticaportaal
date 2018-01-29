@@ -3,15 +3,7 @@ var socketio = require('socket.io');
 var modules = {};
 var mysql = require('mysql');
 var async = require('async');
-var databaseSettings = {
-  host: "localhost",
-  user: "root",
-  password: "NiA12309",
-  database: "domotica_portaal"
-};
-
-
-
+var config = require('./config');
 
 module.exports = function(server){
     var io = socketio(server);
@@ -85,7 +77,7 @@ module.exports = function(server){
 }    
 
 function registerModule(ip, mac_address, cb){
-    var con = mysql.createConnection(databaseSettings);
+    var con = mysql.createConnection(config.databaseSettings);
     ip = ip.replace('::ffff:','');
     con.connect(function(err){
 

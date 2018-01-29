@@ -1,54 +1,57 @@
 import React, { Component } from 'react';
-import {Table, Navbar, Nav, NavItem, NavDropdown, MenuItem, form, FormControl, FormGroup, Col, Checkbox, Button } from 'react-bootstrap';
-import {BrowserRouter as Router, Switch, Route, Link, Redirect } from 'react-router-dom';
-import './App.css';
-import Gebruikers from './Gebruikers';
-import Modules from './Modules';
-import EnkeleModuleOverzicht from './Enkelemodule';
+import {Switch, Route, Redirect } from 'react-router-dom';
+import Gebruikers from './Gebruikers/';
+import Modules from './Modules/';
 import NavbarMenu from './NavbarMenu';
-import Login from './Login';
-import GebruikersAanmaken from './GebruikersAanmaken';
-import Alarmmelding from './Alarmmelding';
-import Wijzigen from './Wijzigen';
+import Login from './Login/';
+import './App.css';
 
-var user_logged_in = true;
+function withProps(Component, props) {
+    return function(matchProps) {
+      return <Component {...props} {...matchProps} />
+    }
+  }
+
+const Main = (props) => (
+  <div>
+    <NavbarMenu />
+    <Switch>   
+      <Route exact path='/gebruikers' component={Gebruikers} />
+      <Route exact path='/modules' component={Modules} />
+      <Redirect from="/" to="/modules" />
+    </Switch>
+  </div>
+)
+
+const LoginMain = (props) => (
+  <Switch>
+    <Route path='/login' component={withProps(Login, {setUser:props.setUser})} />          
+    <Redirect push to={"/login"} />
+  </Switch>
+)
+
 
 class App extends Component {
+
+  constructor(props){
+    super(props);
+
+    var user = JSON.parse(localStorage.getItem('user'));
+    this.state = {user:user}
+  }
+
+  setUser(user){
+    localStorage.setItem('user', JSON.stringify(user));
+    this.setState({'user':user});
+  }  
+
   render() {
-    if (!user_logged_in)
-      return (
-      <div>
+    let view = this.state.user ? <Main /> : <LoginMain setUser={this.setUser.bind(this)} />;
 
-        <Redirect to='./Login'  />
-
-        <NavbarMenu />
-
-        <Route exact path='/Gebruikers' component={Gebruikers} />
-        <Route exact path='/Modules' component={Modules} />
-        <Route exact path='/Enkelemodule' component={EnkeleModuleOverzicht} />
-        <Route exact path='/Wijzigen' component={Wijzigen} />
-        <Route exact path='/Login' component={Login} />
-        <Route exact path='/GebruikersAanmaken' component={GebruikersAanmaken} />
-        <Route exact path='/Alarmmelding' component={Alarmmelding} />
-
-      </div>
-    );
-    else
     return (
       <div>
-
-        <NavbarMenu />
-
-        <Route exact path='/Gebruikers' component={Gebruikers} />
-        <Route exact path='/Modules' component={Modules} />
-        <Route exact path='/Enkelemodule' component={EnkeleModuleOverzicht} />
-        <Route exact path='/Wijzigen' component={Wijzigen} />
-        <Route exact path='/Login' component={Login} />
-        <Route exact path='/GebruikersAanmaken' component={GebruikersAanmaken} />
-        <Route exact path='/Alarmmelding' component={Alarmmelding} />
-
+        { view }
       </div>
-
     );
   }
 }
