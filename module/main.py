@@ -74,7 +74,8 @@ class Main:
 
         led = LED(2)
         led.on()
-        
+        print("LED should be on")
+
         socket_thread = Thread(target=self.socket_handler, daemon=True)
         alarm_thread = Thread(target=self.alarm, daemon=True)
 
