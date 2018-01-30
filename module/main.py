@@ -42,7 +42,8 @@ class Main:
             self.camera_on = True
             p = Popen(['/usr/local/bin/streamer.sh'])
             sleep(3)
-            self.socket.send('camera_on'.encode())
+            pkg = json.dumps({'msg': 'camera_on'});
+            self.socket.send(pkg.encode())
         else: 
             print("Camera already streaming")
             
@@ -51,7 +52,8 @@ class Main:
             self.camera_on = False 
             call(['/usr/local/bin/stop_stream.sh'])
             print('camera should be off')
-            self.socket.send('camera_off')
+            pkg = json.dumps({'msg': 'camera_off'});
+            self.socket.send(pkg.encode())
         else:
             print("Camera not streaming")
             
