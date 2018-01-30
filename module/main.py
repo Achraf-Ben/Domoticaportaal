@@ -39,14 +39,12 @@ class Main:
 
     def activate_camera(self):
         if not self.camera_on:
-            p = Popen(['/usr/local/bin/streamer.sh'])
-            p.wait()
-            sleep(1);
-    
+            call(['/usr/local/bin/streamer.sh'])
+            
     def deactivate_camera(self):
         if not self.camera_on:
-            p = Popen(['/usr/local/bin/stop_stream.sh'])
-            p.wait()
+            call(['/usr/local/bin/stop_stream.sh'])
+            
     
     def alarm(self):
         'stuurt alarmmelding naar de server'
@@ -56,8 +54,7 @@ class Main:
             if button.is_pressed and self.alarm_triggered == False:
                 self.alarm_triggered = True
                 
-                camera_thread = Thread(target=self.activate_camera, daemon=True)
-                camera_thread.start()
+                self.camera_on();
                 
                 pkg = json.dumps({'msg': 'alarm'})
                 self.socket.send(pkg.encode())
