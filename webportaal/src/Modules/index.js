@@ -4,8 +4,6 @@ import request from 'superagent';
 import './Modules.css';
 
 const CameraModal = props => (
-  
-
   <div className="static-modal">
     <Modal.Dialog>
       <Modal.Header>
@@ -113,3 +111,4 @@ class Modules extends Component {
 }
 
 export default Modules
+export {CameraModal}

@@ -42,9 +42,8 @@ module.exports = function(server){
     // tcp socket server voor modules
     function serverHandler(socket){
         console.log('CONNECTED: ' + socket.remoteAddress +':'+ socket.remotePort);
-
+        socket.setTimeout(6000, socket.destroy);
         socket.on('data', function(data){
-            console.log('DATA: '+data)
             data = JSON.parse(data);
         
             if(data.msg == 'register'){
@@ -63,14 +62,14 @@ module.exports = function(server){
             }
 
             if(data.msg == 'alarm'){
-                console.log('ALAAARM: '+socket.module_id)
-                createAlarm(socket.module_id, function(module){
-                    io.local.emit('alarm', {module:module});
+                createAlarm(socket.module_id, function(err, module){
+                    io.local.emit('alarm', module);
                 });
             }
         }); 
 
-        socket.on('end', function(){
+        socket.on('timeout', function(){
+            console.log('Socket: '+socket.module_id+" has disconnected");
             updateStatus(socket.module_id, 0, function(){
                 io.local.emit('module_disconnect', {id:socket.module_id});
             });
@@ -85,10 +84,15 @@ function createAlarm(id, callback){
             createAlarm: function(cb){
                 var timestamp = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
                 var values = [[id, 1, timestamp]];
-                conn.query("INSERT INTO alarm (module_id, status, alarm_time), VALUES ?", 
+                conn.query("INSERT INTO alarm (module_id, status, alarm_time) VALUES ?", 
                     [values], function(err, results){
                         cb(err);
                     });
+            },
+            updateAlarm: function(cb){
+                conn.query("UPDATE module SET camera_status=1 WHERE id=?", [id], function(err, results){
+                    cb()
+                });
             },
             getModule: function(cb){
                 conn.query("SELECT * FROM module WHERE id=? LIMIT 1", [id], function(err, results){
