@@ -10,7 +10,7 @@ class Main:
     def __init__(self):
         'maak verbinding met server'
 
-        host = '192.168.42.7'
+        host = 'server.zorgtotaal.com'
         port = 4040
 
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
