@@ -5,6 +5,9 @@ var mysql = require('mysql');
 var async = require('async');
 var config = require('./config');
 var moment = require('moment');
+var pool  = mysql.createPool(config.databaseSettings);
+
+
 
 module.exports = function(server){
     var io = socketio(server);
@@ -14,14 +17,11 @@ module.exports = function(server){
     // Socket.io verbinding voor website en app
     io.on('connection', function (socket) { 
         socket.on('alarm_off', function(data){
-            conn = mysql.createConnection(config.databaseSettings);
-            conn.connect(function(err){
-                conn.query("UPDATE module SET camera_status=0 WHERE id=?",[data.id],function(){
-                    tcpSocket = modules[data.id];
-                    tcpSocket.write('alarm_off');
-                    io.local.emit('new_module');
-                });
-            }); 
+            pool.query("UPDATE module SET camera_status=0 WHERE id=?",[data.id],function(){
+                tcpSocket = modules[data.id];
+                tcpSocket.write('alarm_off');
+                io.local.emit('new_module');
+            });
         });
 
         socket.on('light_on', function(data){
@@ -84,37 +84,32 @@ module.exports = function(server){
 }    
 
 function createAlarm(id, callback){
-    conn = mysql.createConnection(config.databaseSettings);
-    conn.connect(function(err){
-        async.auto({
-            createAlarm: function(cb){
-                var timestamp = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
-                var values = [[id, 1, timestamp]];
-                conn.query("INSERT INTO alarm (module_id, status, alarm_time) VALUES ?", 
-                    [values], function(err, results){
-                        cb(err);
-                    });
-            },
-            updateModule: function(cb){
-                conn.query("UPDATE module SET camera_status=1 WHERE id=?", [id], function(err, results){
-                    cb()
+    async.auto({
+        createAlarm: function(cb){
+            var timestamp = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
+            var values = [[id, 1, timestamp]];
+            pool.query("INSERT INTO alarm (module_id, status, alarm_time) VALUES ?", 
+                [values], function(err, results){
+                    cb(err);
                 });
-            },
-            getModule: function(cb){
-                conn.query("SELECT * FROM module WHERE id=? LIMIT 1", [id], function(err, results){
-                    cb(err, results[0]);
-                });
-            }
-        }, function(err, results){
-            conn.end();
-            callback(err, results.getModule);
-        });
-    }); 
+        },
+        updateModule: function(cb){
+            pool.query("UPDATE module SET camera_status=1 WHERE id=?", [id], function(err, results){
+                cb()
+            });
+        },
+        getModule: function(cb){
+            pool.query("SELECT * FROM module WHERE id=? LIMIT 1", [id], function(err, results){
+                cb(err, results[0]);
+            });
+        }
+    }, function(err, results){
+        callback(err, results.getModule);
+    });
 }
 
 function updateStatus(id, status, callback){
-    conn = mysql.createConnection(config.databaseSettings);
-    conn.query('UPDATE module SET status = ? WHERE id=?', [status, id], function(err, results){
+    pool.query('UPDATE module SET status = ? WHERE id=?', [status, id], function(err, results){
         callback();
     });
 }
@@ -122,38 +117,32 @@ function updateStatus(id, status, callback){
 function registerModule(ip, mac_address, cb){
     var con = mysql.createConnection(config.databaseSettings);
     ip = ip.replace('::ffff:','');
-    con.connect(function(err){
 
-        if(err){
-            console.log(err);
-        }
-
-        async.auto({
-            getId: function(callback){
-                con.query("SELECT id from module WHERE mac_address=?", [mac_address], function (err, dbResult) {
-                    if (err) console.log(err);
-                    callback(null, dbResult);                    
+    async.auto({
+        getId: function(callback){
+            pool.query("SELECT id from module WHERE mac_address=?", [mac_address], function (err, dbResult) {
+                if (err) console.log(err);
+                callback(null, dbResult);                    
+            });
+        },
+        register: ['getId', function(results, callback){
+            if(results.getId.length){
+                var id = results.getId[0].id;
+                updateStatus(id, 1, function(){
+                    callback(null, id);
                 });
-            },
-            register: ['getId', function(results, callback){
-                if(results.getId.length){
-                    var id = results.getId[0].id;
-                    updateStatus(id, 1, function(){
-                        callback(null, id);
+            } else {
+                var values = [['',ip,mac_address,0,0,1]];
+                pool.query("INSERT INTO module (hostname, ip, mac_address, camera_status, light_status, status) VALUES ?",
+                    [values],function(err, dbResult){
+                        if(err) console.log(err);
+                        callback(null, dbResult.insertId);
                     });
-                } else {
-                    var values = [['',ip,mac_address,0,0,1]];
-                    con.query("INSERT INTO module (hostname, ip, mac_address, camera_status, light_status, status) VALUES ?",
-                        [values],function(err, dbResult){
-                            if(err) console.log(err);
-                            callback(null, dbResult.insertId);
-                        });
-                }
-            }]
-        }, function(err, results){
-            con.end();
-            cb(results.register);
-        });
+            }
+        }]
+    }, function(err, results){
+        con.end();
+        cb(results.register);
     });
 }
 

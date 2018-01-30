@@ -4,6 +4,7 @@ var mysql = require('mysql');
 var bcrypt = require('bcrypt');
 var async = require('async');
 var config = require('../config');
+var pool  = mysql.createPool(config.databaseSettings);
 
 router.post('/login', function(req, res, next){
 	var conn = mysql.createConnection(config.databaseSettings)
@@ -13,52 +14,43 @@ router.post('/login', function(req, res, next){
 
 	console.log(req.body);
 
-	conn.connect(function(err){
-		if(err){
+	async.auto({
+		get_user: function(callback){
+			pool.query("SELECT id, email, password from user WHERE email=?",[email], 
+				function(err, result){
+					callback(err, result);
+				});
+		},
+		authenticate: ['get_user', function(results, callback){
+			if(!results.get_user.length){
+				console.log('no user');
+				callback('unauthorized');
+			} else {
+				var user = results.get_user[0];
+				bcrypt.compare(password, user.password, function(err, res) {
+					if(res) {
+						callback(null, {user:user})
+					} else {
+						callback('unauthorized');
+					} 
+				});
+			}
+		}]
+	}, function(err, results){
+		if(err && err == 'unauthorized'){
+			res.status(403).json({error:err});
+		} else if(err){
 			console.log(err);
 			res.status(500).json({error:'server_error'});
-			return
+		} else {
+			var user = results.authenticate.user
+			session.user_id = user.id;
+			res.json({
+				id: user.id,
+				email:user.email
+			});
 		}
-
-		async.auto({
-			get_user: function(callback){
-				conn.query("SELECT id, email, password from user WHERE email=?",[email], 
-					function(err, result){
-						callback(err, result);
-					});
-			},
-			authenticate: ['get_user', function(results, callback){
-				if(!results.get_user.length){
-					console.log('no user');
-					callback('unauthorized');
-				} else {
-					var user = results.get_user[0];
-					bcrypt.compare(password, user.password, function(err, res) {
-						if(res) {
-							callback(null, {user:user})
-						} else {
-							callback('unauthorized');
-						} 
-					});
-				}
-			}]
-		}, function(err, results){
-			conn.end();
-			if(err && err == 'unauthorized'){
-				res.status(403).json({error:err});
-			} else if(err){
-				console.log(err);
-				res.status(500).json({error:'server_error'});
-			} else {
-				var user = results.authenticate.user
-				session.user_id = user.id;
-				res.json({
-					id: user.id,
-					email:user.email
-				})
-			}
-		});
-	});	
+	});
 });
 
 router.post('/', function(req, res, next){
@@ -78,14 +70,9 @@ router.post('/', function(req, res, next){
 		},
 	}, function(err, results){
 		var password = results.hashPassword;
-
-		var conn = mysql.createConnection(config.databaseSettings);
 		var values = [[req.body.email, password]];
-		conn.connect(function(err){
-			conn.query("INSERT INTO user (email, password) VALUES ?", [values], function(err, result){
-				conn.end();
-				res.json({success:true});
-			});
+		pool.query("INSERT INTO user (email, password) VALUES ?", [values], function(err, result){
+			res.json({success:true});
 		});
 	});
 });
@@ -98,22 +85,16 @@ router.get('/', function(req, res, next) {
 		return
 	} 
 
-	conn = mysql.createConnection(config.databaseSettings);
-	conn.connect(function(err){
+
+
+	pool.query("SELECT id, email FROM user", function(err, result){
+		
 		if(err){
 			console.log(err);
 			res.status(500).send("database_error");
 		}
 
-		conn.query("SELECT id, email FROM user", function(err, result){
-			conn.end();
-			if(err){
-				console.log(err);
-				res.status(500).send("database_error");
-			}
-
-			res.json(result);
-		});
+		res.json(result);
 	});
 	
 });
@@ -155,17 +136,9 @@ router.put('/:id', function(req, res, next){
 	}, function(err, results){
 		var sql = results.makeQuery.sql;
 		var params_list = results.makeQuery.params_list;
-		console.log(sql);
-		console.log(params_list);
 
-		var conn = mysql.createConnection(config.databaseSettings);
-		conn.connect(function(err){
-			conn.query(sql,params_list, function(err, result){
-				console.log('err: '+err)
-				// console.log('rows affected: '+result.affectedRows)
-				conn.end();
-				res.json({success:true});
-			});
+		pool.query(sql,params_list, function(err, result){
+			res.json({success:true});
 		});
 	});
 });

@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import {Switch, Route, Redirect } from 'react-router-dom';
 import Gebruikers from './Gebruikers/';
-import Modules, {CameraModal} from './Modules/';
+import Modules from './Modules/';
 import NavbarMenu from './NavbarMenu';
 import Login from './Login/';
 import io from 'socket.io-client';
-import { Table, Modal, Form, FormControl, ControlLabel, Button, ButtonToolbar, FormGroup, Row, Col } from 'react-bootstrap';
+import { Modal, ControlLabel, Button, FormGroup } from 'react-bootstrap';
 import './App.css';
 
 function withProps(Component, props) {
@@ -59,7 +59,6 @@ class Main extends Component {
     const socket = io(this.state.socket_server);
     socket.on('alarm', function(module){
       this.setState({alarm:true, alarm_module:module});
-      console.log(this.state);
     }.bind(this));
 
     let cameramodal = null;

@@ -46,16 +46,14 @@ class Main:
         if not self.camera_on:
             p = Popen(['/usr/local/bin/stop_stream.sh'])
             p.wait()
+            sleep(1);
     
     def alarm(self):
         'stuurt alarmmelding naar de server'
         button = Button(17)
-        print('alarm armed')
         while True:
             #op knopje gedrukt
             if button.is_pressed and self.alarm_triggered == False:
-                print('sending alarm')
-                print('alarm disarmed until reset')
                 self.alarm_triggered = True
                 
                 camera_thread = Thread(target=self.activate_camera, daemon=True)
@@ -72,7 +70,6 @@ class Main:
 
     def socket_handler(self):
         led = LED(2)
-        print('listening for incoming messages')
         while True:
             data = self.socket.recv(1024)
 
@@ -87,7 +84,6 @@ class Main:
                 led.off()
             if data == 'alarm_off':
                 self.alarm_triggered = False
-                print('stopping alarm')
                 self.deactivate_camera()
             if data == 'camera_on':
                 if not self.camera_on:

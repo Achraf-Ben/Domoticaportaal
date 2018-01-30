@@ -4,6 +4,7 @@ var mysql = require('mysql');
 var bcrypt = require('bcrypt');
 var async = require('async');
 var config = require('../config');
+var pool  = mysql.createPool(config.databaseSettings);
 
 router.get('/', function(req, res, next) {
 	var user_id = req.session.user_id;
@@ -13,21 +14,15 @@ router.get('/', function(req, res, next) {
 		return
 	} 
 
-	conn = mysql.createConnection(config.databaseSettings);
-	conn.connect(function(err){
-		if(err){
-			console.log(err);
-			res.status(500).send("database_error");
-		}
 
-		conn.query("SELECT * FROM module", function(err, result){
+		pool.query("SELECT * FROM module", function(err, result){
 			if(err){
 				console.log(err);
 				res.status(500).send("database_error");
 			}
+			
 			res.json(result);
 		});
-	});
 	
 });
 
