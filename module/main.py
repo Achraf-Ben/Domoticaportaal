@@ -40,11 +40,12 @@ class Main:
     def activate_camera(self):
         if not self.camera_on:
             p = Popen(['/usr/local/bin/streamer.sh'])
-            p.wait()
+            sleep(10)
             
     def deactivate_camera(self):
         if not self.camera_on:
             call(['/usr/local/bin/stop_stream.sh'])
+            print('camera should be off')
             
     
     def alarm(self):
