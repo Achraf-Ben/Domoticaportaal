@@ -9,15 +9,16 @@
     <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline'; style-src 'self' 'unsafe-inline'; media-src *" />
     <link rel="stylesheet" type="text/css" href="css/index.css" />
     <script type="text/javascript" src="js/index.js"></script>
-    <title> Mark Snier </title>
+    <title> Domotica portaal </title>
 </head>
 
-<body>
-    <script type="text/javascript" src="cordova.js"></script>
-    <script type="text/javascript" src="js/index.js"></script>
-    <h1> Zorgtotaal </h1>
+<script>
+onDeviceReady()
+</script>
 
-    <div>
+<body>
+    <div class = "main">
+    <h1>Zorgtotaal</h1> <h1 id="title"></h1>
         <div class="first">
           <p class="center">Lamp</p>
             <button onclick="lampAan()"; class="onButton">AAN</button>

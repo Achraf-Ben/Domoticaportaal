@@ -54,6 +54,10 @@ class Main extends Component {
 
   }
 
+  reloadVideoStream(){
+    this.setState({videourl:'http://'+this.state.alarm_module.ip+':10088/?action=stream'});
+  }
+
   render(){
 
     const socket = io(this.state.socket_server);
@@ -64,7 +68,9 @@ class Main extends Component {
     let cameramodal = null;
 
     if(this.state.alarm){
-      let videostream = <img src={'http://'+this.state.alarm_module.ip+':10088/?action=stream'} alt=""/>
+      var me = this;
+      let videostream = <img src={'http://'+me.state.alarm_module.ip+':10088/?action=stream'} alt=""/>
+      
       cameramodal = <AlarmModal videostream={videostream} closeModal={this.deactivate_alarm.bind(this)}/>
     }
 
