@@ -41,7 +41,7 @@ class Main extends Component {
   constructor(props){
     super(props);
     this.state = {
-      socket_server:'http://localhost',
+      socket_server:'http://server.zorgtotaal.com',
       alarm: false,
       alarm_module:null
     }
