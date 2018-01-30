@@ -41,13 +41,19 @@ class Main:
         if not self.camera_on:
             self.camera_on = True
             p = Popen(['/usr/local/bin/streamer.sh'])
-            sleep(10)
+            sleep(3)
+            self.socket.send('camera_on'.encode())
+        else: 
+            print("Camera already streaming")
             
     def deactivate_camera(self):
         if self.camera_on:
             self.camera_on = False 
             call(['/usr/local/bin/stop_stream.sh'])
             print('camera should be off')
+            self.socket.send('camera_off')
+        else:
+            print("Camera not streaming")
             
     
     def alarm(self):
@@ -83,7 +89,7 @@ class Main:
                 print('light_on')
                 led.on()
             if data == 'light_off':
-                print('light_off')
+                print('light off')
                 led.off()
             if data == 'alarm_off':
                 self.alarm_triggered = False
@@ -93,6 +99,7 @@ class Main:
                 print(self.camera_on)
                 self.activate_camera()
             if data == 'camera_off':
+                print('camera_off')
                 self.deactivate_camera()
 
 

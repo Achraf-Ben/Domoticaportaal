@@ -41,7 +41,7 @@ class Main extends Component {
   constructor(props){
     super(props);
     this.state = {
-      socket_server:'http://localhost',
+      socket_server:'http://server.zorgtotaal.com',
       alarm: false,
       alarm_module:null
     }
@@ -49,6 +49,11 @@ class Main extends Component {
 
   deactivate_alarm(){
     const socket = io(this.state.socket_server);
+
+    socket.on("connection", function(){
+      console.log("socket connected");
+    })
+
     socket.emit('alarm_off', {id:this.state.alarm_module.id})
     this.setState({alarm:false, alarm_module:null})
 
