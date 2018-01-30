@@ -17,34 +17,39 @@ module.exports = function(server){
     // Socket.io verbinding voor website en app
     io.on('connection', function (socket) { 
         socket.on('alarm_off', function(data){
-            pool.query("UPDATE module SET camera_status=0 WHERE id=?",[data.id],function(){
-                tcpSocket = modules[data.id];
+            tcpSocket = modules[data.id];
+            if(tcpSocket){
                 tcpSocket.write('alarm_off');
                 io.local.emit('new_module');
-            });
+            }  
         });
 
         socket.on('light_on', function(data){
-		console.log(data)
             tcpSocket = modules[data.id];
-		if(tcpSocket){
-		tcpSocket.write('light_on')
-		}
+            if(tcpSocket){
+                tcpSocket.write('light_on');
+            }
         });
 
         socket.on('light_off', function(data){
             tcpSocket = modules[data.id];
-            tcpSocket.write('light_off');
+            if(tcpSocket){
+                tcpSocket.write('light_off');
+            }
         });
 
         socket.on('camera_on', function(data){
             tcpSocket = modules[data.id];
-            tcpSocket.write('camera_on');
+            if(tcpSocket){
+                tcpSocket.write('camera_on');
+            }
         });
 
         socket.on('camera_off', function(data){
             tcpSocket = modules[data.id];
-            tcpSocket.write('camera_off')
+            if(tcpSocket){
+                tcpSocket.write('camera_on')
+            }
         });
     });
 
@@ -70,6 +75,18 @@ module.exports = function(server){
                 });
             }
 
+            if(data.msg == 'camera_on'){
+                updateStatus(socket.id, 'camera_status', 1, function(){
+                    io.local.emit('camera_on')
+                });
+            }
+
+            if(data.msg == 'camera_off'){
+                updateStatus(socket.id, 'camera_status', 0 function(){
+                    io.local.emit('camera_off')
+                });
+            }
+
             if(data.msg == 'alarm'){
                 createAlarm(socket.module_id, function(err, module){
                     io.local.emit('alarm', module);
@@ -80,7 +97,7 @@ module.exports = function(server){
         socket.on('timeout', function(){
             console.log('Socket: '+socket.module_id+" has disconnected");
             updateStatus(socket.module_id, 0, function(){
-                io.local.emit('module_disconnect', {id:socket.module_id});
+                io.local.emit('module_disconnect');
             });
         });
     }
@@ -111,8 +128,8 @@ function createAlarm(id, callback){
     });
 }
 
-function updateStatus(id, status, callback){
-    pool.query('UPDATE module SET status = ? WHERE id=?', [status, id], function(err, results){
+function updateStatus(id, col, status, callback){
+    pool.query('UPDATE module SET ? = ? WHERE id=?', [col, status, id], function(err, results){
         callback();
     });
 }
