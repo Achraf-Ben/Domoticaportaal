@@ -27,7 +27,9 @@ class Modules extends Component {
   }
 
   componentDidMount(){
-    this.getModules()
+    if(!this.state.modules.length){
+      this.getModules()
+    }
   }
 
   getModules(){
@@ -78,6 +80,7 @@ class Modules extends Component {
     ));
 
     let form = null;
+    let timeout = 0;
     if(this.state.showCamera){
       let videostream = <img src="/static.jpg" alt=""/>
       let module = this.state.module;
@@ -86,9 +89,11 @@ class Modules extends Component {
         videostream = <img src={'http://'+module.ip+':10088/?action=stream'} alt=""/>
       } 
 
+      timeout = 2000;
+
       form = <CameraModal videostream={videostream} closeModal={this.closeModal.bind(this)}/>
     }
-
+  
     return (
       <div>
         {form}
