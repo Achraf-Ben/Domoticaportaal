@@ -148,7 +148,7 @@ function registerModule(ip, mac_address, cb){
         register: ['getId', function(results, callback){
             if(results.getId.length){
                 var id = results.getId[0].id;
-                updateStatus(id, 1, function(){
+                updateStatus(id, 'status', 1, function(){
                     callback(null, id);
                 });
             } else {
