@@ -1,5 +1,5 @@
 from threading import Thread
-from subprocess import call, Popen, check_output
+from subprocess import call, PIPE, Popen, check_output
 from gpiozero import Button, LED
 import socket
 import json
@@ -104,7 +104,6 @@ class Main:
     def activate_camera(self):
         if not self.camera_on:
             self.camera_on = True
-
             global capture
             capture = cv2.VideoCapture(0)
             capture.set(cv2.CAP_PROP_FRAME_WIDTH, 640); 
@@ -120,7 +119,6 @@ class Main:
                 server.socket.close()
 
             print("It's all running now....")
-
             pkg = json.dumps({'msg': 'camera_on'});
             self.socket.send(pkg.encode())
         else: 
