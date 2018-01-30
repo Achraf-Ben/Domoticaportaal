@@ -1,5 +1,5 @@
 from threading import Thread
-from subprocess import call, Popen, check_output
+from subprocess import call, PIPE, Popen, check_output
 from gpiozero import Button, LED
 import socket
 import json
@@ -40,7 +40,8 @@ class Main:
     def activate_camera(self):
         if not self.camera_on:
             self.camera_on = True
-            p = Popen(['/usr/local/bin/streamer.sh'])
+            result = check_output(['/usr/local/bin/streamer.sh'])
+            print(result.decode('utf-8'))
             sleep(3)
             pkg = json.dumps({'msg': 'camera_on'});
             self.socket.send(pkg.encode())
