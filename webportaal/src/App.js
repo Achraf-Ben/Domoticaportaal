@@ -15,28 +15,25 @@ function withProps(Component, props) {
 }
 
 const AlarmModal = props => (
-  <Modal.Dialog>
-    <Modal.Header>
-      <Modal.Title>Gebruiker Bewerken</Modal.Title>
-    </Modal.Header>
-    <Modal.Body>
-      <FormGroup controlId="email" bsSize="large">
-      <ControlLabel>Email</ControlLabel>
-      <FormControl type="text"/>
-    </FormGroup>
-    <FormGroup controlId="password" bsSize="large">
-      <ControlLabel>Password</ControlLabel>
-      <FormControl />
-    </FormGroup>
-    <FormGroup controlId="passwordCheck" bsSize="large">
-      <ControlLabel>Password</ControlLabel>
-      <FormControl  type="text"/>
-    </FormGroup>
-    </Modal.Body>
-    <Modal.Footer>
-      <Button type="submit" onClick={props.deactivate_alarm} bsStyle="primary">Zet uit</Button>
-    </Modal.Footer>
-  </Modal.Dialog>
+  <div className="static-modal">
+    <Modal.Dialog>
+      <Modal.Header>
+        <Modal.Title>ALARM</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <FormGroup bsSize="large">
+          <ControlLabel>Module: {props.module_id}</ControlLabel>
+        </FormGroup>
+        <FormGroup bsSize="large">
+          <ControlLabel>Tijdstip melding: {props.alarm_time}</ControlLabel>
+        </FormGroup>
+        {props.videostream}
+      </Modal.Body>
+      <Modal.Footer>
+        <Button onClick={props.closeModal}>Alarm uitschakelen</Button>
+      </Modal.Footer>
+    </Modal.Dialog>
+  </div>
 )
 
 class Main extends Component {
@@ -69,7 +66,7 @@ class Main extends Component {
 
     if(this.state.alarm){
       let videostream = <img src={'http://'+this.state.alarm_module.ip+':10088/?action=stream'} alt=""/>
-      cameramodal = <CameraModal videostream={videostream} closeModal={this.deactivate_alarm.bind(this)}/>
+      cameramodal = <AlarmModal videostream={videostream} closeModal={this.deactivate_alarm.bind(this)}/>
     }
 
     return (

@@ -36,6 +36,7 @@ class Main:
                 self.id = data['id']
                 print('registration complete, id is: {}\n'.format(self.id))
                 return
+
     def activate_camera(self):
         if not self.camera_on:
             call(['/usr/local/bin/streamer.sh'])
@@ -101,14 +102,11 @@ class Main:
             if data == 'camera_on':
                 if not self.camera_on:
                     self.camera_on = True
-                    call(['/usr/local/bin/mjpg_streamer', '-i "/usr/local/lib/input_uvc.so '
-                                                          '-n -f 30 -r 640x480" '
-                                                          '-o "/usr/local/lib/output_http.so -p.so '
-                                                          '-p 10088 -w /usr/local/www" &'])
+                    self.activate_camera()
             if data == 'camera_off':
                 if self.camera_on:
                     self.camera_on = False
-                    call(['killall', 'mjpg_streamer'])
+                    self.deactivate_camera()
 
 
     def run(self):

@@ -14,8 +14,14 @@ module.exports = function(server){
     // Socket.io verbinding voor website en app
     io.on('connection', function (socket) { 
         socket.on('alarm_off', function(data){
-            tcpSocket = modules[data.id];
-            tcpSocket.write('alarm_off');
+            conn = mysql.createConnection(config.databaseSettings);
+            conn.connect(function(err){
+                conn.query("UPDATE module SET camera_status=0 WHERE id=?",[data.id],function(){
+                    tcpSocket = modules[data.id];
+                    tcpSocket.write('alarm_off');
+                    io.local.emit('new_module');
+                });
+            }); 
         });
 
         socket.on('light_on', function(data){
@@ -89,7 +95,7 @@ function createAlarm(id, callback){
                         cb(err);
                     });
             },
-            updateAlarm: function(cb){
+            updateModule: function(cb){
                 conn.query("UPDATE module SET camera_status=1 WHERE id=?", [id], function(err, results){
                     cb()
                 });
