@@ -54,7 +54,7 @@ class Main:
             if button.is_pressed and self.alarm_triggered == False:
                 self.alarm_triggered = True
                 
-                self.camera_on();
+                self.activate_camera();
                 
                 pkg = json.dumps({'msg': 'alarm'})
                 self.socket.send(pkg.encode())
