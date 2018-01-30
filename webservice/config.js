@@ -2,9 +2,9 @@ var config = {};
 
 config.databaseSettings = {
   host: "localhost",
-  user: "root",
-  password: "NiA12309",
-  database: "domotica_portaal",
+  user: "portaaldbuser",
+  password: "Ansible123",
+  database: "portaaldb",
   connectionLimit: 10
 };
 
