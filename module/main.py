@@ -78,17 +78,21 @@ class Main:
             data = data.decode()
 
             if data == 'light_on':
+                print('light_on')
                 led.on()
             if data == 'light_off':
+                print('light off')
                 led.off()
             if data == 'alarm_off':
                 self.alarm_triggered = False
                 self.deactivate_camera()
             if data == 'camera_on':
+                print('camera on')
                 if not self.camera_on:
                     self.camera_on = True
                     self.activate_camera()
             if data == 'camera_off':
+                print('camera_off')
                 if self.camera_on:
                     self.camera_on = False
                     self.deactivate_camera()
