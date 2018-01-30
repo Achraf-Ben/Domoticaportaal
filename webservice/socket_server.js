@@ -76,13 +76,13 @@ module.exports = function(server){
             }
 
             if(data.msg == 'camera_on'){
-                updateStatus(socket.id, 'camera_status', 1, function(){
+                updateStatus(socket.module_id, 'camera_status', 1, function(){
                     io.local.emit('camera_on')
                 });
             }
 
             if(data.msg == 'camera_off'){
-                updateStatus(socket.id, 'camera_status', 0, function(){
+                updateStatus(socket.module_id, 'camera_status', 0, function(){
                     io.local.emit('camera_off')
                 });
             }
@@ -129,7 +129,7 @@ function createAlarm(id, callback){
 }
 
 function updateStatus(id, col, status, callback){
-    pool.query('UPDATE module SET '+col+' = ? WHERE id=?', [col, status, id], function(err, results){
+    pool.query('UPDATE module SET ? = ? WHERE id=?', [col, status, id], function(err, results){
         callback();
     });
 }
