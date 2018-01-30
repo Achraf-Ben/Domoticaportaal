@@ -82,7 +82,7 @@ module.exports = function(server){
             }
 
             if(data.msg == 'camera_off'){
-                updateStatus(socket.id, 'camera_status', 0 function(){
+                updateStatus(socket.id, 'camera_status', 0, function(){
                     io.local.emit('camera_off')
                 });
             }
