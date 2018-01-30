@@ -48,7 +48,7 @@ module.exports = function(server){
         socket.on('camera_off', function(data){
             tcpSocket = modules[data.id];
             if(tcpSocket){
-                tcpSocket.write('camera_on')
+                tcpSocket.write('camera_off')
             }
         });
     });
