@@ -96,7 +96,7 @@ module.exports = function(server){
 
         socket.on('timeout', function(){
             console.log('Socket: '+socket.module_id+" has disconnected");
-            updateStatus(socket.module_id, 0, function(){
+            updateStatus(socket.module_id, 'status', 0, function(){
                 io.local.emit('module_disconnect');
             });
         });
@@ -129,7 +129,7 @@ function createAlarm(id, callback){
 }
 
 function updateStatus(id, col, status, callback){
-    pool.query('UPDATE module SET ? = ? WHERE id=?', [col, status, id], function(err, results){
+    pool.query('UPDATE module SET '+col+' = ? WHERE id=?', [col, status, id], function(err, results){
         callback();
     });
 }
