@@ -38,10 +38,6 @@ CREATE TABLE `alarm` (
 -- Dumping data for table `alarm`
 --
 
-LOCK TABLES `alarm` WRITE;
-/*!40000 ALTER TABLE `alarm` DISABLE KEYS */;
-/*!40000 ALTER TABLE `alarm` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `module`
@@ -68,10 +64,6 @@ CREATE TABLE `module` (
 -- Dumping data for table `module`
 --
 
-LOCK TABLES `module` WRITE;
-/*!40000 ALTER TABLE `module` DISABLE KEYS */;
-/*!40000 ALTER TABLE `module` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `user`
