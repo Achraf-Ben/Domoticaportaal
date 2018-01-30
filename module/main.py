@@ -1,5 +1,5 @@
 from threading import Thread
-from subprocess import call, check_output
+from subprocess import call, Popen, check_output
 from gpiozero import Button, LED
 import socket
 import json
@@ -39,21 +39,13 @@ class Main:
 
     def activate_camera(self):
         if not self.camera_on:
-            call(['/usr/local/bin/streamer.sh'])
-            output = check_output(['ps', '-A'])
-            print('mjpg_streamer' in output.decode())
-            while 'mjpg_streamer' not in output.decode():
-                call(['/usr/local/bin/streamer.sh'])
-                output = check_output(['ps', '-A'])
+            p = Popen(['/usr/local/bin/streamer.sh'])
+            p.wait()
     
     def deactivate_camera(self):
         if not self.camera_on:
-            call(['/usr/local/bin/stop_stream.sh'])
-            output = check_output(['ps', '-A'])
-            print('mjpg_streamer' in output.decode())
-            while 'mjpg_streamer' in output.decode():
-                call(['/usr/local/bin/streamer.sh'])
-                output = check_output(['ps', '-A'])
+            p = Popen(['/usr/local/bin/stop_stream.sh'])
+            p.wait()
     
     def alarm(self):
         'stuurt alarmmelding naar de server'
@@ -68,8 +60,6 @@ class Main:
                 
                 camera_thread = Thread(target=self.activate_camera, daemon=True)
                 camera_thread.start()
-                
-                sleep(5)
                 
                 pkg = json.dumps({'msg': 'alarm'})
                 self.socket.send(pkg.encode())
