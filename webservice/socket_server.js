@@ -129,7 +129,8 @@ function createAlarm(id, callback){
 }
 
 function updateStatus(id, col, status, callback){
-    pool.query('UPDATE module SET ? = ? WHERE id=?', [col, status, id], function(err, results){
+    console.log('UPDATE module SET '+col+'='+status+' WHERE id='+id);
+    pool.query('UPDATE module SET ?=? WHERE id=?', [col, status, id], function(err, results){
         callback();
     });
 }
