@@ -9,7 +9,7 @@ from time import sleep
 class Main:
     def __init__(self):
         'maak verbinding met server'
-
+	
         host = 'server.zorgtotaal.com'
         port = 4040
 
@@ -39,11 +39,13 @@ class Main:
 
     def activate_camera(self):
         if not self.camera_on:
+            self.camera_on = True
             p = Popen(['/usr/local/bin/streamer.sh'])
             sleep(10)
             
     def deactivate_camera(self):
-        if not self.camera_on:
+        if self.camera_on:
+            self.camera_on = False 
             call(['/usr/local/bin/stop_stream.sh'])
             print('camera should be off')
             
@@ -78,20 +80,20 @@ class Main:
             data = data.decode()
 
             if data == 'light_on':
+                print('light_on')
                 led.on()
             if data == 'light_off':
+                print('light_off')
                 led.off()
             if data == 'alarm_off':
                 self.alarm_triggered = False
                 self.deactivate_camera()
             if data == 'camera_on':
-                if not self.camera_on:
-                    self.camera_on = True
-                    self.activate_camera()
+                print('camera_on')
+                print(self.camera_on)
+                self.activate_camera()
             if data == 'camera_off':
-                if self.camera_on:
-                    self.camera_on = False
-                    self.deactivate_camera()
+                self.deactivate_camera()
 
 
     def run(self):
