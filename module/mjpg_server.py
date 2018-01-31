@@ -46,7 +46,7 @@ class ThreadedHTTPServer(ThreadingMixIn, HTTPServer):
 
 def main():
 	global capture
-	capture = cv2.VideoCapture(0)
+	capture = cv2.VideoCapture(-1)
 	capture.set(cv2.CAP_PROP_FRAME_WIDTH, 640); 
 	capture.set(cv2.CAP_PROP_FRAME_HEIGHT, 480);
 	capture.set(cv2.CAP_PROP_SATURATION,0.6);

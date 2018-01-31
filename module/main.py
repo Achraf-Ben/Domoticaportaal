@@ -52,27 +52,11 @@ class CamHandler(BaseHTTPRequestHandler):
 class ThreadedHTTPServer(ThreadingMixIn, HTTPServer):
     """Handle requests in a separate thread."""
 
-def main():
-    global capture
-    capture = cv2.VideoCapture(0)
-    capture.set(cv2.CAP_PROP_FRAME_WIDTH, 640); 
-    capture.set(cv2.CAP_PROP_FRAME_HEIGHT, 480);
-    capture.set(cv2.CAP_PROP_SATURATION,0.2);
-    global img
-    try:
-        server = ThreadedHTTPServer(('localhost', 10088), CamHandler)
-        print( "server started")
-        server.serve_forever()
-    except KeyboardInterrupt:
-        capture.release()
-        server.socket.close()
-
-
 class Main:
     def __init__(self):
         'maak verbinding met server'
 	
-        host = 'server.zorgtotaal.com'
+        host = '192.168.2.6'
         port = 4040
 
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -101,7 +85,7 @@ class Main:
 
 
 
-    def activate_camera(self):
+    def activate_camera(self, alarm):
         if not self.camera_on:
             self.camera_on = True
             global capture
@@ -145,7 +129,8 @@ class Main:
             if button.is_pressed and self.alarm_triggered == False:
                 self.alarm_triggered = True
                 activate_camera_thread = Thread(target=self.activate_camera, args=(True,), daemon=True)
-    
+                activate_camera_thread.start()
+
     def keep_alive(self):
         while True:
             pkg = json.dumps({'msg':'keepalive'})
@@ -173,8 +158,8 @@ class Main:
                 self.deactivate_camera()
             if data == 'camera_on':
                 print('camera_on')
-                print((self.camera_on))
-                self.activate_camera()
+                activate_camera_thread = Thread(target=self.activate_camera, args=(True,), daemon=True)
+                activate_camera_thread.start()
             if data == 'camera_off':
                 print('camera_off')
                 self.deactivate_camera()
