@@ -72,7 +72,6 @@ module.exports = function(server){
 
                     socket.write(response)
                     io.local.emit('new_module', {id:id});
-                    setTimeout(function(){socket.write('camera_on')}, 2000)
                 });
             }
 
