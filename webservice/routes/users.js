@@ -20,7 +20,10 @@ var pool  = mysql.createPool(config.databaseSettings);
 // Route om in te loggen
 // POST: /api/users/login
 router.post('/login', function(req, res, next){
-	/*
+	/*	
+		Route om in te loggen
+		POST: /api/users/login
+
 		Een client stuurt een email en een wachtwoord op.
 		De gebruiker wordt opgehaald uit de database op met het email adres en vervolgens
 		wordt er gekeken of er een regel terugkomt. Als er een regel terugkomt wordt 
