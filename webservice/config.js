@@ -1,3 +1,7 @@
+/*
+	Configuratie bestand voor de databasegegevens
+*/
+
 var config = {};
 
 config.databaseSettings = {
@@ -7,13 +11,5 @@ config.databaseSettings = {
  database: "portaaldb",
  connectionLimit: 10
 }
-
-// config.databaseSettings = {
-//   host: "localhost",
-//   user: "root",
-//   password: "NiA12309",
-//   database: "domotica_portaal",
-//   connectionLimit:10 
-// };
 
 module.exports = config;
