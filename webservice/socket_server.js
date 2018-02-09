@@ -19,56 +19,24 @@ function socketIOHandler(socket){
         Binnen deze functie worden binnenkomende berichten over de websocket afgehandeld
     */
 
-    socket.on('alarm_off', function(data){
-    // Bericht om alarm op de domoticamodule uit te zetten.
+    // Maak voor alle mogelijke binnenkomende berichten dezelfde listener
+    var events = ['alarm_off', 'light_on', 'light_off', 'camara_on', 'camera_off']
 
-        // Haal de TCP socket naar de correcte module op met het meegstuurde id.
-        tcpSocket = modules[data.id];
-        if(tcpSocket){
-            tcpSocket.write('alarm_off'); // Stuur bericht door naar de module.
-            io.local.emit('alarm_off', data); // Laat andere webportaal clients weten dat het alarm is uitgezet.
-        }  
-    });
+    for(var i=0;i<incoming_messages.length; i++){
+        e = events[i];
+        socket.on(e, function(data){
 
-    socket.on('light_on', function(data){
-        // Bericht om de verlichting die op de module is aangesloten aan te zetten.
+            // Haal de TCP socket naar de correcte module op met het meegstuurde id.
+            tcpSocket = modules[data.id];
+            if(tcpSocket){
+                tcpSocket.write(e); // Stuur bericht door naar de module.
 
-        // Haal de TCP socket naar de correcte module op met het meegstuurde id.
-        tcpSocket = modules[data.id];
-        if(tcpSocket){
-            tcpSocket.write('light_on'); // Stuur bericht door naar de module.
-        }
-    });
-
-    socket.on('light_off', function(data){
-        // Bericht om de verlichting die op de module is aangesloten uit te zetten.
-
-        // Haal de TCP socket naar de correcte module op met het meegstuurde id.
-        tcpSocket = modules[data.id];
-        if(tcpSocket){
-            tcpSocket.write('light_off'); // Stuur bericht door naar de module.
-        }
-    });
-
-    socket.on('camera_on', function(data){
-        // Bericht om de camera die op de module is aangesloten aan te zetten.
-        
-        // Haal de TCP socket naar de correcte module op met het meegstuurde id.
-        tcpSocket = modules[data.id];
-        if(tcpSocket){
-            tcpSocket.write('camera_on'); // Stuur bericht door naar de module.
-        }
-    });
-
-    socket.on('camera_off', function(data){
-        // Bericht om de camera die op de module is aangesloten uit te zetten.
-        
-        // Haal de TCP socket naar de correcte module op met het meegstuurde id.
-        tcpSocket = modules[data.id];
-        if(tcpSocket){
-            tcpSocket.write('camera_off'); // Stuur bericht door naar de module.
-        }
-    });
+                if(e == "alarm_off"){
+                    io.local.emit(e, data); // Stuur bericht door naar andere websocket clients
+                }
+            } 
+        });
+    }
 }
 
 function serverHandler(socket){
@@ -86,7 +54,7 @@ function serverHandler(socket){
             // bericht om een module te registreren
 
             registerModule(socket.remoteAddress, data.mac_address, function(id){
-                // Wanneer de module geregistreerd is sla dan de socket naar de module
+                // WanneHer de module geregistreerd is sla dan de socket naar de module
                 // op in het geheugen onder het id van de module.
                 socket.module_id = id;
                 modules[id] = socket;
